@@ -204,7 +204,7 @@ flowchart LR
 ```
 
 - Everything runs on a self-hosted GitHub Actions runner on the production machine, so the Docker
-  layer cache is warm and the whole pipeline takes about a minute.
+  layer cache is warm and validation takes about a minute.
 - Backend tests run inside the freshly built image against an in-memory store, with dummy
   credentials that point at an invalid host, so a test that tried to reach a real database would
   fail instead of touching production.

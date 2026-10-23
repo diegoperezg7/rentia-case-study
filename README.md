@@ -39,9 +39,9 @@
 
 Renting out a few flats in Spain looks simple until you do it every month:
 
-- **Contracts under the LAU** (Ley de Arrendamientos Urbanos): residential leases run up to five
-  years by law, with notice windows before renewal and before that five-year mark, and different
-  rules for whole flats and for rooms.
+- **Contracts under the LAU** (Ley de Arrendamientos Urbanos): tenants can extend a residential
+  lease year by year up to five years (seven with a corporate landlord), with notice windows before
+  each renewal and before that limit, and different paperwork for whole flats and for rooms.
 - **Rent updates by index.** For residential leases signed after May 2023, the annual update is
   tied to the INE's IRAV index (published since 2025) instead of the CPI (IPC). Someone has to look
   up the right figure, apply it on the contract anniversary and notify the tenant in writing.
@@ -63,8 +63,8 @@ place and derives what can be derived instead of asking for it twice.
 Everything below exists in the production codebase.
 
 **Portfolio and leases**
-- Properties as buildings, flats, rooms and storage units, with multiple owners and ownership
-  percentages.
+- Properties as buildings, flats, rooms, commercial units and storage units, with multiple owners
+  and ownership percentages.
 - Tenants with co-tenants and guarantors. ID cards (DNI/NIE) are read by OCR to prefill the form.
 - Contract generation from Word templates per contract type (whole flat or room), rendered to PDF,
   with annexes such as house rules for shared flats.
@@ -78,7 +78,7 @@ Everything below exists in the production codebase.
 - Expenses passed on to the tenant are added to the right month's receipt exactly once per flat.
 - Receipt PDFs archived next to the payment. Overdue status is derived on read, never stored.
 - Invoice upload with OCR: amount, date, category and property extracted and proposed for review.
-- Profitability per property (yield, net income, monthly real view) and accounting summaries.
+- Profitability per property (yield, net income, month-by-month actuals) and accounting summaries.
 - Exports to CSV and Excel, plus the data behind tax forms Modelo 100, 180 and 303.
 
 **Compliance**
@@ -109,8 +109,8 @@ Everything below exists in the production codebase.
 | ![Expenses](docs/screenshots/expenses.png) **Expenses.** Invoice upload with OCR, category, and whether and when the tenant is charged. | ![Profitability](docs/screenshots/profitability.png) **Profitability.** Yield per property and the real month-by-month view. |
 | ![Accounting](docs/screenshots/accounting.png) **Accounting.** Income, deductible expenses and taxable base for the year. | ![Tour](docs/screenshots/tour.gif) **Walkthrough.** |
 
-Modules that need certificates or real documents (IRPF return, contract signing, Verifactu, OCR
-and chat) are not shown.
+The demo build used for these screenshots does not include every production module: the IRPF
+return, contract signing, Verifactu, document OCR and chat are described above but not shown.
 
 ## Architecture
 
@@ -157,8 +157,9 @@ flowchart LR
 - **One backend, no ORM.** FastAPI routers per domain over a thin store layer on PostgREST. Domain
   rules (periods, proration, what counts as income) live in small pure modules shared by the API,
   the scheduler and the chat, so the three cannot disagree.
-- **Models stay on the host.** The backend reaches Ollama on the host machine. OCR, invoice and ID
-  card extraction and document embeddings have no code path to an external provider.
+- **Models stay on the host.** In production everything runs locally through Ollama on the same
+  machine; no document or chat data leaves the server. The code supports an optional hosted
+  provider as a fallback, and it is disabled.
 - **Deploys are gated.** Push to `main` runs backend tests, lint and the Docker build, then the
   frontend lint, tests and production build. Only if all of that is green does the deploy job pull,
   rebuild, wait for Docker health checks, and roll back to the previous commit automatically if
@@ -208,11 +209,10 @@ chat model was rejected for being 72% slower without better answers. The vector 
 deliberately absent until the document volume makes it worth having.
 
 **Privacy by architecture.** The users' data includes ID numbers, bank details and signed leases.
-OCR, invoice and ID extraction, and embeddings run only on local models on the same machine as the
-database. Chat and lease-term extraction are local first; a hosted model is used only as a fallback
-if one is explicitly configured.
-The semantic search function filters by user inside SQL, so no caller can forget the filter, and it
-respects per-viewer property visibility so the chat cannot become a side door into hidden data.
+In production, OCR, extraction, chat and embeddings all run on local models on the same machine as
+the database, so no document or chat data leaves the server. The semantic search function filters by user inside SQL, so no
+caller can forget the filter, and it respects per-viewer property visibility so the chat cannot
+become a side door into hidden data.
 
 **One source of truth per rule.** Each business rule lives in one module and every consumer imports
 it: the receipt generator, the scheduler, the dashboard and the chat. When production surfaced a
