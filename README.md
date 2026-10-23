@@ -76,7 +76,8 @@ Everything below exists in the production codebase.
 **Money**
 - Monthly rent receipts generated per active contract, with day-based proration when a lease
   starts or ends mid-month, and one-off income (bookings, deposits) in the same ledger.
-- Expenses passed on to the tenant are added to the right month's receipt exactly once per flat.
+- Bills passed on to the tenant are added to the rent receipt of the month they are assigned to,
+  and never to one-off income in the same month.
 - Receipt PDFs archived next to the payment. Overdue status is derived on read, never stored.
 - Invoice upload with OCR: amount, date, category and property extracted and proposed for review.
 - Profitability per property (yield, net income, month-by-month actuals) and accounting summaries.

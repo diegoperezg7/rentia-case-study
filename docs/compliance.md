@@ -66,8 +66,8 @@ month, is a separate decision:
 - Water bills are deferred automatically to the next month's receipt.
 - Other bills need an explicit month; until one is chosen the expense is flagged as missing it
   rather than silently assumed.
-- A bill is added to exactly one receipt per flat and month, even in shared flats with several
-  room contracts.
+- Bills are grouped per property and month and added to that month's rent receipt only, never to
+  one-off income such as a booking fee in the same month.
 
 ## Rent updates: IRAV and IPC
 
