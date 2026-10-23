@@ -29,9 +29,9 @@
 </p>
 
 > This repository is a case study. The source code is private; what is here is a description of
-> the product and its engineering, with screenshots taken from a local demo build seeded with
-> synthetic data. Every name, address, ID and amount in the images is invented. The app's UI is in
-> Spanish because its users are.
+> the product and its engineering, with screenshots of the current production version running
+> locally on synthetic data. Every name, address, ID and amount in the images is invented. The app's
+> UI is in Spanish because its users are.
 
 ---
 
@@ -63,8 +63,9 @@ place and derives what can be derived instead of asking for it twice.
 Everything below exists in the production codebase.
 
 **Portfolio and leases**
-- Properties as buildings, flats, rooms, commercial units and storage units, with multiple owners
-  and ownership percentages.
+- Properties as whole flats, flats let by the room, holiday lets, commercial units and storage
+  units, with an owners view: multiple owners per property, ownership percentages and per-owner
+  yearly income.
 - Tenants with co-tenants and guarantors. ID cards (DNI/NIE) are read by OCR to prefill the form.
 - Contract generation from Word templates per contract type (whole flat or room), rendered to PDF,
   with annexes such as house rules for shared flats.
@@ -104,13 +105,15 @@ Everything below exists in the production codebase.
 
 | | |
 |---|---|
-| ![Dashboard](docs/screenshots/dashboard.png) **Dashboard.** Monthly income, net profit, occupancy, next collection and alerts. | ![Properties](docs/screenshots/properties.png) **Properties.** Flats, rooms, commercial units and storage. |
-| ![Contracts](docs/screenshots/contracts.png) **Contracts.** Numbered leases with PDF, deposit and the rent-update action when the anniversary is near. | ![Income and receipts](docs/screenshots/payments.png) **Income and receipts.** Water passed on to the tenant shows up as `+agua` on the receipt it belongs to. |
-| ![Expenses](docs/screenshots/expenses.png) **Expenses.** Invoice upload with OCR, category, and whether and when the tenant is charged. | ![Profitability](docs/screenshots/profitability.png) **Profitability.** Yield per property and the real month-by-month view. |
-| ![Accounting](docs/screenshots/accounting.png) **Accounting.** Income, deductible expenses and taxable base for the year. | ![Tour](docs/screenshots/tour.gif) **Walkthrough.** |
+| ![Dashboard](docs/screenshots/dashboard.png) **Dashboard.** Month or year view: income, net profit, expenses, occupancy, next collection, alerts and per-property performance. | ![Properties](docs/screenshots/properties.png) **Properties.** Whole flats, flats let by the room, holiday lets, commercial units and storage. |
+| ![Flat let by the room](docs/screenshots/property-rooms.png) **Flat let by the room.** Each room with its rent and status, and the flat's income, expenses and occupancy. | ![Contract](docs/screenshots/contract-detail.png) **Contract.** Lease terms next to the PDF generated from the template, with signing, termination and regeneration actions. |
+| ![Income and receipts](docs/screenshots/payments.png) **Income and receipts.** Rent and one-off income in one ledger; bills passed on to the tenant show up as `+luz` or `+agua` on the receipt they belong to. | ![Expenses](docs/screenshots/expenses.png) **Expenses.** Granular categories, PDF upload and camera scan, and whether and in which month the tenant is charged. |
+| ![IRPF return](docs/screenshots/irpf.png) **Income tax return.** Per-property Modelo 100 breakdown with AEAT box numbers, depreciation, reductions and a data-completeness check, with live IRAV and IPC. | ![Calendar](docs/screenshots/calendar.png) **Calendar.** Collections, lease starts and ends, with an ICS feed for Google or Apple Calendar. |
 
-The demo build used for these screenshots does not include every production module: the IRPF
-return, contract signing, Verifactu, document OCR and chat are described above but not shown.
+![Walkthrough](docs/screenshots/tour.gif)
+
+Not shown: document OCR and chat, which need the local models, and Verifactu, which is disabled
+by default.
 
 ## Architecture
 
