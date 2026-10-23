@@ -157,8 +157,8 @@ flowchart LR
 - **One backend, no ORM.** FastAPI routers per domain over a thin store layer on PostgREST. Domain
   rules (periods, proration, what counts as income) live in small pure modules shared by the API,
   the scheduler and the chat, so the three cannot disagree.
-- **Models stay on the host.** The backend reaches Ollama on the host machine. Contract text and ID
-  cards are processed and embedded locally.
+- **Models stay on the host.** The backend reaches Ollama on the host machine. OCR, invoice and ID
+  card extraction and document embeddings have no code path to an external provider.
 - **Deploys are gated.** Push to `main` runs backend tests, lint and the Docker build, then the
   frontend lint, tests and production build. Only if all of that is green does the deploy job pull,
   rebuild, wait for Docker health checks, and roll back to the previous commit automatically if
@@ -208,7 +208,9 @@ chat model was rejected for being 72% slower without better answers. The vector 
 deliberately absent until the document volume makes it worth having.
 
 **Privacy by architecture.** The users' data includes ID numbers, bank details and signed leases.
-OCR, extraction, chat and embeddings all run on local models on the same machine as the database.
+OCR, invoice and ID extraction, and embeddings run only on local models on the same machine as the
+database. Chat and lease-term extraction are local first; a hosted model is used only as a fallback
+if one is explicitly configured.
 The semantic search function filters by user inside SQL, so no caller can forget the filter, and it
 respects per-viewer property visibility so the chat cannot become a side door into hidden data.
 

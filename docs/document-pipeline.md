@@ -2,8 +2,8 @@
 
 Landlords receive paperwork in every possible shape: digital PDFs from utilities, phone photos of
 hardware-store tickets, scanned ID cards, signed leases. The pipeline turns each one into a
-prefilled form the user confirms. It runs entirely on the production machine: Tesseract in the
-backend container and local models through Ollama.
+prefilled form the user confirms. OCR and extraction run on the production machine: Tesseract in
+the backend container and local models through Ollama.
 
 The guiding rule is that a wrong value saved silently is worse than an empty field. A missing date
 gets noticed and filled in; an invented one ends up in the wrong tax year.
@@ -156,7 +156,9 @@ flowchart TD
 ## Leases
 
 Uploading an existing lease PDF extracts tenant name, ID number, address, monthly rent, deposit,
-start and end dates and payment day as JSON with a local model, to prefill the contract record.
+start and end dates and payment day as JSON with a local model, to prefill the contract record. A
+hosted model can serve as a fallback for this step only if one is explicitly configured; invoices,
+ID cards and embeddings never leave the machine.
 Categories that do not need extraction (deposit receipts, ID scans) skip the model entirely.
 
 ## Semantic index
